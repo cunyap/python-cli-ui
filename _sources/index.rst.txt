@@ -19,6 +19,17 @@ Installation
 ``cli-ui`` is available on `Pypi <https://pypi.org/project/cli-ui/>`_.
 and is compatible with Python **3.6** and higher.
 
+Note for Windows users
+-----------------------
+
+`cli_ui` tries to be smart and disables color output when it would create
+weird strings to appear on screen, and this works pretty well on non-Windows
+platforms (because the behavior of the `isatty()` function be trusted there).
+
+On Windows, the behavior of `isatty()` cannot be trusted (it may return
+False on `Mintty` for instance),  so coloring is disabled unless you
+opt-in by calling :func:`setup` with `color=always`.
+
 API
 ----
 
@@ -62,7 +73,6 @@ You can use any of these constants as a ``token`` in the following functions:
   * ``darkred``
   * ``darkyellow``
   * ``fuchsia``
-  * ``fuscia``
   * ``green``
   * ``lightgray``
   * ``purple``
@@ -184,7 +194,11 @@ Functions below use ``sys.stderr`` by default:
 
       >>> cli_ui.fatal("Message")
       Error: message
-      exit()
+      exit(1)
+
+      >>> cli_ui.fatal("Another message", exit_code=2)
+      Error: Another message
+      exit(2)
 
 
 Progress messages
@@ -293,7 +307,7 @@ Asking for user input
 
   .. versionchanged:: 0.10
 
-      Add ``sort`` paramater to disable sorting the list of choices
+      Add ``sort`` parameter to disable sorting the list of choices
 
   .. versionchanged:: 0.8
 
@@ -319,10 +333,10 @@ Asking for user input
 
   ::
 
-      >>> fav_food = cli_ui.ask_password("Guilty pleasure?")
+      >>> favorite_food = cli_ui.ask_password("Guilty pleasure?")
       :: Guilty pleasure?
       ****
-      >>> fav_food
+      >>> favorite_food
       'chocolate'
 
 Displaying duration
@@ -390,10 +404,10 @@ Testing
 
     # in foo.py
     def foo():
-        cli_ui.info("Fooing")
+        cli_ui.info("Doing foo stuff")
 
 
     # in test_foo.py
     def test_foo(message_recorder):
          foo()
-         assert message_recorder.find("Fooing")
+         assert message_recorder.find("foo stuff")
